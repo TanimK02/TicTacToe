@@ -9,8 +9,58 @@
 </head>
 
 <body>
+    <div class="winContainer" id="winContainer">
+        <div class="winMessage">You Win</div>
+    </div>
+    <div class="loseContainer" id="loseContainer">
+        <div class="loseMessage">You Lose</div>
+    </div>
+    <div class="winContainer" id="turnContainer">
+        <div class="winMessage">You First</div>
+    </div>
+    <div class="pqContainer">
+        <button class="playButton" id="playButton">Play</button>
+        <button class="quitButton" id="quitButton">Quit</button>
 
-    <script src="script.js"></script>
+    </div>
+    <div class="gameContainer">
+        <div class="statsContainer">
+            <div class="stats">
+                <p>Computer:</p>
+                <p id="computerWins">0 Wins</p>
+            </div>
+            <div class="stats markClass">
+                <p>Mark:</p>
+                <p id="computerMark">None</p>
+            </div>
+        </div>
+        <div class="gameBoardContainer">
+            <div class="gameBoard" id="gameBoard">
+                <div class="spot" data-row="0" data-col="0"></div>
+                <div class="spot" data-row="0" data-col="1"></div>
+                <div class="spot" data-row="0" data-col="2"></div>
+                <div class="spot" data-row="1" data-col="0"></div>
+                <div class="spot" data-row="1" data-col="1"></div>
+                <div class="spot" data-row="1" data-col="2"></div>
+                <div class="spot" data-row="2" data-col="0"></div>
+                <div class="spot" data-row="2" data-col="1"></div>
+                <div class="spot" data-row="2" data-col="2"></div>
+            </div>
+        </div>
+        <div class="statsContainer">
+            <div class="stats">
+                <p>Player:</p>
+                <p id="playerWins">0 Wins</p>
+            </div>
+            <div class="stats markClass">
+                <p>Mark:</p>
+                <p id="playerMark">None</p>
+            </div>
+        </div>
+        <div></div>
+    </div>
+    <script src="script.js">
+    </script>
 </body>
 
 </html>

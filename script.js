@@ -1,5 +1,8 @@
 
-function gameBoard() {
+
+
+
+const boardModule = (function gameBoard() {
     let board = [
         [0, 0, 0],
         [0, 0, 0],
@@ -15,6 +18,7 @@ function gameBoard() {
             return true
         }
         return false
+
     }
 
     const checkMate = () => {
@@ -60,18 +64,16 @@ function gameBoard() {
     }
 
     return { chooseSpot, checkMate, checkDraw, resetBoard, getBoard }
-}
+})();
 
 
 function Players() {
-    wins = 0;
-    mark = 0;
+    let wins = 0;
+    let mark = 0;
 
     const choosePlayerSpot = (chooseSpot, r, c) => {
         let res = chooseSpot(mark, r, c)
-        while (!res) {
-            res = chooseSpot(mark, r, c)
-        }
+        return res;
 
     }
 
@@ -87,7 +89,7 @@ function Players() {
         mark = symbol;
     }
 
-    const getMark = (symbol) => {
+    const getMark = () => {
         return mark;
     }
 
@@ -96,3 +98,214 @@ function Players() {
 
 
 
+const game = (function Game() {
+    let document = null;
+    let boardModule = null;
+    const computer = Players();
+    const player = Players();
+    let handleClick = (e) => {
+        if (e.target.classList.contains("spot")) {
+            let r = e.target.dataset.row;
+            let c = e.target.dataset.col;
+            r = Number(r)
+            c = Number(c)
+            if (!player.choosePlayerSpot(boardModule.chooseSpot, r, c)) {
+                return
+            }
+            let img = document.createElement("img");
+            boardCopy = boardModule.getBoard();
+
+            if (boardCopy[r][c] == "X") {
+                img.src = "assets/x-symbol-svgrepo-com.svg";
+            }
+            else if (boardCopy[r][c] == "O") {
+                img.src = "assets/letter-o-svgrepo-com.svg";
+            }
+            e.target.appendChild(img);
+            //check here
+            let res = 0;
+            if (boardModule.checkDraw()) {
+                handleQuit();
+            }
+            res = boardModule.checkMate()
+            if (res != 0) {
+                if (res == player.getMark()) {
+                    player.giveWin();
+                    document.getElementById("playerWins").innerText = `${player.getWins()}`;
+                    document.getElementById("winContainer").style.width = "100%";
+                    document.getElementById("winContainer").style.height = "100%";
+                    document.getElementById("winContainer").style.display = "flex";
+                    setTimeout(() => {
+                        document.getElementById("winContainer").style.width = "0%";
+                        document.getElementById("winContainer").style.height = "0%";
+                        document.getElementById("winContainer").style.display = "none";
+                        handleQuit();
+                    }, 3 * 1000)
+
+
+                    return
+                }
+                else {
+                    computer.giveWin();
+                    document.getElementById("computerWins").innerText = `${computer.getWins()}`;
+                    document.getElementById("loseContainer").style.width = "100%";
+                    document.getElementById("loseContainer").style.height = "100%";
+                    document.getElementById("loseContainer").style.display = "flex";
+                    setTimeout(() => {
+                        document.getElementById("loseContainer").style.width = "0%";
+                        document.getElementById("loseContainer").style.height = "0%";
+                        document.getElementById("loseContainer").style.display = "none";
+                        handleQuit();
+                    }, 3 * 1000)
+                    return
+
+                }
+            }
+            r = Math.floor(Math.random() * 3);
+            c = Math.floor(Math.random() * 3);
+            while (!
+                computer.choosePlayerSpot(boardModule.chooseSpot,
+                    r, c)) {
+                r = Math.floor(Math.random() * 3);
+                c = Math.floor(Math.random() * 3);
+            }
+            let children = gameBoard.children;
+            for (let i = 0; i < children.length; i++) {
+                if (children[i].dataset.row == r.toString() && children[i].dataset.col == c.toString()) {
+                    let img = document.createElement("img");
+                    boardCopy = boardModule.getBoard();
+
+                    if (boardCopy[r][c] == "X") {
+                        img.src = "assets/x-symbol-svgrepo-com.svg";
+                    }
+                    else if (boardCopy[r][c] == "O") {
+                        img.src = "assets/letter-o-svgrepo-com.svg";
+                    }
+                    children[i].appendChild(img);
+                }
+            }
+            //check here
+            res = 0;
+            if (boardModule.checkDraw()) {
+                handleQuit();
+            }
+            res = boardModule.checkMate()
+            if (res != 0) {
+                if (res == player.getMark()) {
+                    player.giveWin();
+                    document.getElementById("playerWins").innerText = `${player.getWins()}`;
+                    document.getElementById("winContainer").style.width = "100%";
+                    document.getElementById("winContainer").style.height = "100%";
+                    document.getElementById("winContainer").style.display = "flex";
+                    setTimeout(() => {
+                        document.getElementById("winContainer").style.width = "0%";
+                        document.getElementById("winContainer").style.height = "0%";
+                        document.getElementById("winContainer").style.display = "none";
+                        handleQuit();
+                    }, 3 * 1000)
+
+                    return
+
+                }
+                else {
+                    computer.giveWin();
+                    document.getElementById("computerWins").innerText = `${computer.getWins()}`;
+                    document.getElementById("loseContainer").style.width = "100%";
+                    document.getElementById("loseContainer").style.height = "100%";
+                    document.getElementById("loseContainer").style.display = "flex";
+                    setTimeout(() => {
+                        document.getElementById("loseContainer").style.width = "0%";
+                        document.getElementById("loseContainer").style.height = "0%";
+                        document.getElementById("loseContainer").style.display = "none";
+                        handleQuit();
+                    }, 3 * 1000)
+
+                    return
+                }
+            }
+
+        }
+    }
+
+    let handleQuit = () => {
+        boardModule.resetBoard();
+        let children = gameBoard.children;
+        for (let i = 0; i < children.length; i++) {
+            children[i].innerText = "";
+        }
+        document.getElementById("computerMark").innerText = `None`;
+        document.getElementById("playerMark").innerText = `None`;
+        gameBoard.removeEventListener("click", handleClick)
+    }
+    function start() {
+        if (!document || !boardModule) {
+            return null
+        }
+        const gameBoard = document.getElementById("gameBoard");
+        const quitButton = document.getElementById("quitButton");
+        quitButton.addEventListener("click", handleQuit)
+        let random = Math.floor(Math.random() * 2);
+        if (random == 1) {
+            player.giveMark("X")
+            computer.giveMark("O")
+        }
+        else {
+            computer.giveMark("X")
+            player.giveMark("O")
+        }
+        document.getElementById("computerMark").innerText = `${computer.getMark()}`;
+        document.getElementById("playerMark").innerText = `${player.getMark()}`;
+        if (random == 0) {
+            r = Math.floor(Math.random() * 3);
+            c = Math.floor(Math.random() * 3);
+            while (!
+                computer.choosePlayerSpot(boardModule.chooseSpot,
+                    r, c)) {
+                r = Math.floor(Math.random() * 3);
+                c = Math.floor(Math.random() * 3)
+            }
+            let children = gameBoard.children;
+            for (let i = 0; i < children.length; i++) {
+                if (children[i].dataset.row == r.toString() && children[i].dataset.col == c.toString()) {
+                    let img = document.createElement("img");
+                    boardCopy = boardModule.getBoard();
+
+                    if (boardCopy[r][c] == "X") {
+                        img.src = "assets/x-symbol-svgrepo-com.svg";
+                    }
+                    else if (boardCopy[r][c] == "O") {
+                        img.src = "assets/letter-o-svgrepo-com.svg";
+                    }
+                    children[i].appendChild(img);
+                }
+            }
+        }
+
+
+
+
+        gameBoard.addEventListener("click", handleClick)
+
+
+
+    }
+
+    function play(doc, boardM) {
+        if (!doc || !boardM) {
+            return null
+        }
+        document = doc;
+        boardModule = boardM;
+        const playButton = doc.getElementById("playButton");
+        if (!playButton) {
+            return
+        }
+        playButton.addEventListener("click", () => {
+            start(doc);
+        })
+    }
+
+    return { play };
+})();
+
+game.play(document, boardModule)
